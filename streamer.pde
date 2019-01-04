@@ -8,12 +8,15 @@ class Stream {
   float time = 0;
   float currentRadius = 0;
 
+  PVector lastMousePos;
   
   
   Stream(float newX, float newY)
   {
     x = newX;
     y = newY;
+    
+    lastMousePos = new PVector(0,0);
   }
   
   void mouseIsPressed()
@@ -107,12 +110,17 @@ class Stream {
       return targetPos;
     }
     
+    if (mousePressed)
+    {
+      lastMousePos.x = mouseX;
+      lastMousePos.y = mouseY;
+    }
    
-    PVector p = new PVector( mouseX-x, mouseY-y);
+    PVector p = new PVector( lastMousePos.x - x, lastMousePos.y - y);
     float rad = abs(radius);
     
     
-    float distance = dist(x, y, mouseX, mouseY);    
+    float distance = dist(x, y, lastMousePos.x, lastMousePos.y);    
     
     if(distance < rad)
     {    
@@ -141,6 +149,7 @@ class Stream {
   void render(float timeElapsed)
   {
     currentRadius = radiusEnvelope.getGatedOutput() * (width /4);
+    
     for (int i =0; i < text.length(); i++)
     {
       int rowPos = floor(y / symbolSize);

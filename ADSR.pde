@@ -27,11 +27,11 @@ class ADSR {
   float fps;
   
   float attackRate;
-  float decayRate; //unused
+  float decayRate; 
   float releaseRate;
   
   float attackCoef;
-  float decayCoef; //unused
+  float decayCoef; 
   float releaseCoef;
   
   float sustainLevel;
@@ -49,7 +49,7 @@ class ADSR {
   adsrStates currentState;
  
   
-  ADSR(float at, float dt, float sl, float rt, float newFps)
+  ADSR(float aTime, float dTime, float sLevel, float rTime, float newFps)
   {
     fps =  newFps;
     
@@ -57,10 +57,10 @@ class ADSR {
     setTargetRatioDR(0.01); // low for exponential, 100 for linear
     
     
-    setAttackRate( at );
-    setDecayRate(dt);
-    setSustainLevel(sl);
-    setReleaseRate(rt);
+    setAttackRate( aTime );
+    setDecayRate( dTime );
+    setSustainLevel( sLevel );
+    setReleaseRate( rTime );
     
     currentState = adsrStates.env_idle;
   }
@@ -80,7 +80,11 @@ class ADSR {
   }
   
   void setDecayRate(float rate)
-  {}
+  {
+    decayRate = rate * fps;
+    decayCoef = calcCoef(decayRate, targetRatioDR);
+    decayBase = (sustainLevel - targetRatioDR) * (1.0 - decayCoef);
+  }
   
   void setReleaseRate(float rate)
   {
@@ -146,11 +150,17 @@ class ADSR {
         output = attackBase + output * attackCoef;
         if (output >= 1.0)
         {
-          currentState = adsrStates.env_sustain;
+          currentState = adsrStates.env_decay;
         }
         break;
         
       case env_decay:
+        output = decayBase + output * decayCoef;
+        if  (output <= sustainLevel)
+        {
+          output = sustainLevel;
+          currentState = adsrStates.env_sustain; 
+        }
         break;
         
       case env_sustain:

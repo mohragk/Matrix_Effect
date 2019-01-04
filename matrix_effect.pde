@@ -21,9 +21,9 @@ void setup()
   rows = (int)width / (int)symbolSize;
   streams = new Stream[rows];
   radiusEnvelope = new ADSR(
-    40, // attackTime in sec
-    1.0, // releaseTime in sec
-    1.0, // sustainLevel [0.0 - 1.0]
+    60, // attackTime 
+    0, // decayTime (unused) 
+    1, // sustainLevel [0.0 - 1.0]
     200, // releaseTime
     60   // fps
   );
@@ -73,9 +73,6 @@ void draw()
   
   image(gfx,0,0);
   
-  textSize(32);
-  fill(255);
-  text(frameRate, 100, 100);
   
   timeElapsed = 1 / frameRate;
 }
