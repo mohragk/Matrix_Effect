@@ -20,7 +20,13 @@ void setup()
   
   rows = (int)width / (int)symbolSize;
   streams = new Stream[rows];
-  radiusEnvelope = new ADSR(100.0, 10.0, width/4, 400.0);
+  radiusEnvelope = new ADSR(
+    40, // attackTime in sec
+    1.0, // releaseTime in sec
+    1.0, // sustainLevel [0.0 - 1.0]
+    200, // releaseTime
+    60   // fps
+  );
   
   for (int i =0 ; i < streams.length; i++)
   {

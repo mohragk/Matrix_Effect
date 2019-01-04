@@ -140,7 +140,7 @@ class Stream {
 
   void render(float timeElapsed)
   {
-
+    currentRadius = radiusEnvelope.getGatedOutput() * (width /4);
     for (int i =0; i < text.length(); i++)
     {
       int rowPos = floor(y / symbolSize);
@@ -187,7 +187,7 @@ class Stream {
       currentRadius += (targetRadius - currentRadius) * speed * timeElapsed; 
       */
       
-      currentRadius = radiusEnvelope.getOutput();
+      
 
       
       PVector targetPos = getAvoidPosition(_x, _y, currentRadius);
