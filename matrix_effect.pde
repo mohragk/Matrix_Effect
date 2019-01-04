@@ -1,10 +1,12 @@
-float symbolSize =18;
+float symbolSize = 16;
 float timeElapsed = 0;
 
 PGraphics gfx;
 PFont font;
 
 Stream[] streams;
+
+ADSR radiusEnvelope;
 
 
 int rows;
@@ -18,6 +20,7 @@ void setup()
   
   rows = (int)width / (int)symbolSize;
   streams = new Stream[rows];
+  radiusEnvelope = new ADSR(100.0, 10.0, width/4, 400.0);
   
   for (int i =0 ; i < streams.length; i++)
   {
@@ -26,14 +29,26 @@ void setup()
     streams[i] = new Stream(newX,0);
     streams[i].prepare();
   }
-    for (int i = 0; i < 300; i++)
-    {
-      println(PFont.list()[i]);
-    }
+   
   font = createFont("HiraginoSans-W3", symbolSize);
   
 }
 
+void mousePressed()
+{
+  for (int i =0 ; i < streams.length; i++)
+  {
+    streams[i].mouseIsPressed();
+  }
+}
+
+void mouseReleased()
+{
+  for (int i =0 ; i < streams.length; i++)
+  {
+    streams[i].mouseIsReleased();
+  }
+}
 
 void draw()
 {
@@ -52,6 +67,9 @@ void draw()
   
   image(gfx,0,0);
   
+  textSize(32);
+  fill(255);
+  text(frameRate, 100, 100);
   
   timeElapsed = 1 / frameRate;
 }

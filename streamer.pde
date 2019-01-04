@@ -1,13 +1,14 @@
 
 class Stream {
-  int length = 14;
+  int length = 18;
   String text ="";
   float x = 0;
   float y = 0;
-  float speed = 0.1; //seconds
+  float interval = 0.1; //seconds
   float time = 0;
   float currentRadius = 0;
 
+  
   
   Stream(float newX, float newY)
   {
@@ -15,6 +16,15 @@ class Stream {
     y = newY;
   }
   
+  void mouseIsPressed()
+  {
+    radiusEnvelope.mouseIsPressed();
+  }
+  
+  void mouseIsReleased()
+  {
+    radiusEnvelope.mouseIsReleased();
+  }
   
   void prepare()
   {
@@ -22,16 +32,15 @@ class Stream {
     text = randomString();
     length = text.length();
     
-    speed = random(0.01, 0.08);
+    interval = random(0.01, 0.08);
   }
   
   void update(float timeElapsed)
   {
-    if (time >= speed)
+    if (time >= interval)
     {
       y += (symbolSize);
       time = 0;
-      text = shift(text);
     }
     
     if (y - (text.length() * symbolSize) > height)
@@ -40,6 +49,7 @@ class Stream {
     }
     
     flicker();
+    
     
     time += timeElapsed;
   }
@@ -65,10 +75,8 @@ class Stream {
   char randomChar()
   {
 //    int leftBound = 0x3041;
-        int leftBound = 0x30A0;
-
+    int leftBound = 0x30A0;
     int rightBound = leftBound + 96;
-    
     int r = (int)random(leftBound, rightBound);
     
     return (char) r;
@@ -101,45 +109,49 @@ class Stream {
     
    
     PVector p = new PVector( mouseX-x, mouseY-y);
+    float rad = abs(radius);
     
     
     float distance = dist(x, y, mouseX, mouseY);    
     
-    if(distance < radius)
+    if(distance < rad)
     {    
-      float factor = distance / radius;
-      float displacement = (radius/4) *(1 - factor);
+      float factor = distance / rad;
+      float displacement = (rad/4) *(1 - factor);
       
       
       p.limit(1);
-      targetPos.x -= (p.x * displacement);
-      targetPos.y -= (p.y * displacement);
+      
+      if (radius > 0) 
+      {
+        targetPos.x -= (p.x * displacement);
+        targetPos.y -= (p.y * displacement);
+      }
+      else
+      {
+        targetPos.x += (p.x * displacement);
+        targetPos.y += (p.y * displacement);
+      }
     }
 
     return targetPos;
   }
   
-  
-  float getDynamicRadius(float currentRadius, float targetRad, float elapsedTime)
-  {
-    float speed = 1.0;
-    
-    currentRadius += (targetRad - currentRadius) * speed * elapsedTime; 
-    
-    return currentRadius;
-  }
-  
+
   void render(float timeElapsed)
   {
 
     for (int i =0; i < text.length(); i++)
     {
-      char c = text.charAt(i);
+      int rowPos = floor(y / symbolSize);
+      int charIdx = abs(i - (rowPos)) % text.length();
+      
+      char c = text.charAt(charIdx);
       
       colorMode(HSB, 360, 100, 100);
       color col = color(132, 92, 82);
       
-      float brightness = map(speed, 0.01, 0.08, 100, 20);
+      float brightness = map(interval, 0.01, 0.08, 100, 20);
       col = color(132, 92, brightness);
       
       if (i < 7)
@@ -161,14 +173,22 @@ class Stream {
       float _x = x;
       float _y = y - (i * symbolSize);
       
-      float targetRadius = 0;
       
+      /*
+      float targetRadius = 0;
+
       if (mousePressed)
       {
          targetRadius = width /4;
       }
+ 
       
-      currentRadius = getDynamicRadius(currentRadius, targetRadius, timeElapsed);
+      float speed = 1.0;
+      currentRadius += (targetRadius - currentRadius) * speed * timeElapsed; 
+      */
+      
+      currentRadius = radiusEnvelope.getOutput();
+
       
       PVector targetPos = getAvoidPosition(_x, _y, currentRadius);
         
