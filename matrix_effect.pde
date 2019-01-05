@@ -1,4 +1,4 @@
-float symbolSize = 16;
+float symbolSize = 18;
 float timeElapsed = 0;
 float time = 0;
 
@@ -25,8 +25,8 @@ int rows;
 
 void setup()
 {
-  size(1024, 720, P2D);
-  //fullScreen(P2D);
+  //size(1024, 720, P2D);
+  fullScreen(P2D);
   
   setupGraphics();
   
@@ -105,7 +105,7 @@ void setBlurAmount(float amt)
 
 void setMouseDirection()
 {
-  float easing = 0.05;
+  float easing = 0.09;
   float dx = mouseX - lastMousePos.x;
   lastMousePos.x += dx * easing;
   
@@ -125,7 +125,7 @@ void draw()
   rect(30, 20, 240, 320);
   
   float dis = PVector.dist(new PVector(mouseX, mouseY), lastMousePos);
-  float blurAmount = map(dis, 0, 120, 0, 1);
+  float blurAmount = map(dis, 40, 120, 0, 1);
   setBlurAmount(blurAmount);
   
   if (gfx != null) {gfx.textFont(font);}
@@ -146,8 +146,16 @@ void draw()
   setMouseDirection();
   
   blur.set("horizontalPass", 1);
-  blur.set("mouseDir_x", mouseDirection.x);
-  blur.set("mouseDir_y", mouseDirection.y);
+  if (mousePressed)
+  {
+    blur.set("mouseDir_x", mouseDirection.x);
+    blur.set("mouseDir_y", mouseDirection.y);
+  }
+  else
+  {
+    blur.set("mouseDir_x", 0.0);
+    blur.set("mouseDir_y", 0.0);
+  }
   pass1.beginDraw();
   pass1.image(gfx, 0,0);
   pass1.shader(blur);
@@ -168,7 +176,8 @@ void draw()
   
   
   float amt = radiusEnvelope.getOutput();
-  shine.set("time", amt);
+  shine.set("amplitude", amt);
+  shine.set("time", time);
   
   pass3.beginDraw();
   pass3.image(pass1, 0,0);
@@ -184,7 +193,7 @@ void draw()
   
   
   timeElapsed = 1 / frameRate;
-  time += 0.01;
+  time += 0.2;
   
   shine.set("clear", 1);
 }
