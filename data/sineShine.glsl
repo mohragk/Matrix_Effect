@@ -16,6 +16,7 @@ varying vec4 vertTexCoord;
 
 uniform float amplitude;
 uniform float time; 
+uniform float brightness;
 
 float pi = 3.141592;
  
@@ -52,11 +53,13 @@ vec3 hsv2rgb(vec3 c)
 
 
     hsvColorA.g = 1.0 - (amplitude * 1 * abs(cos(time * pi * 0.5)));
+    
+   
 
 
     color = hsv2rgb(hsvColorA);
     
-    
+    color = clamp(color * brightness, 0.0, 1.0);
     
    
     

@@ -112,21 +112,30 @@ void setMouseDirection()
   float dy = mouseY - lastMousePos.y;
   lastMousePos.y += dy * easing;
   
-
+  PVector mouse = new PVector(mouseX, mouseY);
+  mouse.sub(lastMousePos);
+  
+  mouse.normalize();
+  
+  
+  mouseDirection = mousePressed ? new PVector(-mouse.x, mouse.y) : new PVector(0.0, 0.0);
+  
+  
+/*
   float angle = atan(dx/dy);
   mouseDirection = PVector.fromAngle(angle + PI * 0.5);
+  */
+  
+  
 }
 
 void draw()
 {
   background(0);
-  shine.set("clear", 0);
   fill(255);
   rect(30, 20, 240, 320);
   
-  float dis = PVector.dist(new PVector(mouseX, mouseY), lastMousePos);
-  float blurAmount = map(dis, 40, 120, 0, 1);
-  setBlurAmount(blurAmount);
+
   
   if (gfx != null) {gfx.textFont(font);}
   gfx.beginDraw();
@@ -143,9 +152,13 @@ void draw()
   pre.image(gfx, 0,0);
   pre.endDraw();
   
+  
+  float dis = PVector.dist(new PVector(mouseX, mouseY), lastMousePos);
+  float blurAmount = map(dis, 40, 120, 0, 1);
+  setBlurAmount(blurAmount);
+  
   setMouseDirection();
   
-  blur.set("horizontalPass", 1);
   if (mousePressed)
   {
     blur.set("mouseDir_x", mouseDirection.x);
@@ -179,6 +192,9 @@ void draw()
   shine.set("amplitude", amt);
   shine.set("time", time);
   
+  float br = mousePressed? map(dis, 0.0, 120.0, 1, 3) : 1.0;
+  shine.set("brightness", br);
+  
   pass3.beginDraw();
   pass3.image(pass1, 0,0);
   pass3.shader(shine);
@@ -195,5 +211,4 @@ void draw()
   timeElapsed = 1 / frameRate;
   time += 0.2;
   
-  shine.set("clear", 1);
 }
