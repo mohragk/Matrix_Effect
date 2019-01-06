@@ -176,7 +176,7 @@ class Stream {
       
       if (i == 0) {
         c = randomChar();
-        col = color(0, 0, 100);
+        col = color(0, 0, 120);
       } 
       
     
@@ -195,6 +195,8 @@ class Stream {
       gfx.textSize(symbolSize);
       gfx.fill(col);
       gfx.text(c, _x, _y);
+      
+      colorMode(RGB, 255, 255, 255);
     }
     
   }

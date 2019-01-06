@@ -24,19 +24,21 @@ float map(float value, float min1, float max1, float min2, float max2)
 
 
 
+
+
 void main()
  {
      
     vec3 green = vec3(0.0, 1.0, 0.4);
     vec4 origColor = texture2D( texture, vertTexCoord.st);
+        
+    vec2 currentPos =  vec2(gl_FragCoord.x, resolution.y - gl_FragCoord.y);
     
-    vec2 currentPos = ( gl_FragCoord.xy / resolution.xy );
-    
-    //currentPos.x *= resolution.x / resolution.y;
-    
-   
    
     float dist = distance(mousePos, currentPos);
+    
+    //convert to ss
+    dist = dist / resolution.x;
     
     float sm = radius * 5;
     
