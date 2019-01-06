@@ -128,7 +128,8 @@ class Stream {
       float displacement = (rad/4) *(1 - factor);
       
       
-      p.limit(1);
+      //p.limit(1);
+      p.normalize();
       
       if (radius > 0) 
       {
@@ -181,20 +182,6 @@ class Stream {
     
       float _x = x;
       float _y = y - (i * symbolSize);
-      
-      
-      /*
-      float targetRadius = 0;
-
-      if (mousePressed)
-      {
-         targetRadius = width /4;
-      }
- 
-      
-      float speed = 1.0;
-      currentRadius += (targetRadius - currentRadius) * speed * timeElapsed; 
-      */
       
       
 

@@ -7,12 +7,13 @@ PVector mouseDirection;
 
 PGraphics pre;
 PGraphics gfx;
-PGraphics pass1;
-PGraphics pass2;
-PGraphics pass3;
+PGraphics blurPass;
+PGraphics shinePass;
+PGraphics orbPass;
 
 PShader blur;
 PShader shine;
+PShader orb;
 
 PFont font;
 
@@ -62,18 +63,18 @@ void setupGraphics()
   
   blur = loadShader("blur.glsl");
   shine = loadShader("sineShine.glsl");
+  orb = loadShader("sphere.glsl");
   
-  pass1 = createGraphics(width, height, P2D);
-  pass1.noSmooth();  
+  blurPass = createGraphics(width, height, P2D);
+  blurPass.noSmooth();  
  
-  pass2 = createGraphics(width, height, P2D);
-  pass2.noSmooth();
+  shinePass = createGraphics(width, height, P2D);
+  shinePass.noSmooth();
   
-  pass3 = createGraphics(width, height, P2D);
-  pass3.noSmooth();
+  orbPass = createGraphics(width, height, P2D);
+  orbPass.noSmooth();
   
-  //blur.set("blurSize", 7);
-  //blur.set("sigma", 6);
+  
 }
 
 void mousePressed()
@@ -129,15 +130,20 @@ void setMouseDirection()
   
 }
 
+float[] normalizeToUV(float[] vals)
+{
+  vals[0] = (vals[0] / float(width) - 0.5) + 1;
+  vals[1] = (vals[1] / float(height) - 0.5) + 1;
+  return vals;
+}
+
 void draw()
 {
   background(0);
-  fill(255);
-  rect(30, 20, 240, 320);
   
-
-  
+  // Main Matrix Symbol rendering
   if (gfx != null) {gfx.textFont(font);}
+  
   gfx.beginDraw();
   gfx.background(0);
   for (int i =0 ; i < streams.length; i++)
@@ -147,10 +153,11 @@ void draw()
   }
   gfx.endDraw();
   
-  
+  /*
   pre.beginDraw();
   pre.image(gfx, 0,0);
   pre.endDraw();
+  */
   
   
   float dis = PVector.dist(new PVector(mouseX, mouseY), lastMousePos);
@@ -159,34 +166,17 @@ void draw()
   
   setMouseDirection();
   
-  if (mousePressed)
+  //if (mousePressed)
   {
     blur.set("mouseDir_x", mouseDirection.x);
     blur.set("mouseDir_y", mouseDirection.y);
   }
-  else
-  {
-    blur.set("mouseDir_x", 0.0);
-    blur.set("mouseDir_y", 0.0);
-  }
-  pass1.beginDraw();
-  pass1.image(gfx, 0,0);
-  pass1.shader(blur);
-  pass1.endDraw();
   
-  
-  /*
-  blur.set("horizontalPass", 0);
-  pass2.beginDraw();
-  pass2.shader(blur);
-  pass2.image(pass1,0,0);
-  pass2.endDraw();
-  */
-  
-  //float alp = millis() / 1000;
-  //amt = radiusEnvelope.getOutput() * 0.5;
-  
-  
+  blurPass.beginDraw();
+  blurPass.image(gfx, 0,0);
+  blurPass.shader(blur);
+  blurPass.endDraw();
+
   
   float amt = radiusEnvelope.getOutput();
   shine.set("amplitude", amt);
@@ -195,14 +185,37 @@ void draw()
   float br = mousePressed? map(dis, 0.0, 120.0, 1, 3) : 1.0;
   shine.set("brightness", br);
   
-  pass3.beginDraw();
-  pass3.image(pass1, 0,0);
-  pass3.shader(shine);
-  pass3.endDraw();
+  shinePass.beginDraw();
+  shinePass.image(blurPass, 0,0);
+  shinePass.shader(shine);
+  shinePass.endDraw();
 
+  float ar = width / height;
+  //orb.set("resolution", float(100), float(100));
+
+  float mx = map(mouseX, 0, width, 0, 1);
+  float my = map(mouseY, 0, height, 1, 0);
+  
+  orb.set("mousePos", mx, my);
+  
+  float rad = 0.0;
+  
+  if (radiusEnvelope.currentState == adsrStates.env_attack ||
+      radiusEnvelope.currentState == adsrStates.env_sustain)
+  {
+    rad = map(radiusEnvelope.getOutput(), 0.0, 1.0, 0, 0.01) ;
+    
+  }
+  orb.set("radius", rad);
   
   
-  image(pass3,0,0);
+  orbPass.beginDraw();
+  orbPass.shader(orb);
+  orbPass.image(shinePass, 0,0);
+  orbPass.endDraw();
+  
+  
+  image(orbPass,0,0);
   //image(pre, 0,0);
   //blend(pre, 0,0, width, height, 0,0, width,height, ADD ); 
   
