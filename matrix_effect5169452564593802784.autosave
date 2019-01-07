@@ -1,5 +1,3 @@
-
-
 float symbolSize = 18;
 float timeElapsed = 0;
 float time = 0;
@@ -7,6 +5,7 @@ float time = 0;
 PVector lastMousePos;
 PVector mouseDirection;
 
+PGraphics pre;
 PGraphics gfx;
 PGraphics blurPass;
 PGraphics shinePass;
@@ -20,9 +19,7 @@ PFont font;
 
 Stream[] streams;
 
-Envelope radiusEnvelope;
-
-OrbSound oSound;
+ADSR radiusEnvelope;
 
 
 int rows;
@@ -39,7 +36,7 @@ void setup()
   
   rows = (int)width / (int)symbolSize;
   streams = new Stream[rows];
-  radiusEnvelope = new Envelope(
+  radiusEnvelope = new ADSR(
     60, // attackTime 
     0, // decayTime (unused) 
     1, // sustainLevel [0.0 - 1.0]
@@ -57,12 +54,11 @@ void setup()
    
   font = createFont("HiraginoSans-W3", symbolSize);
   
-  oSound = new OrbSound(this);
-  
 }
 
 void setupGraphics()
 {
+  pre = createGraphics(width, height, P2D);
   gfx = createGraphics(width, height, P2D);
   
   blur = loadShader("blur.glsl");
@@ -87,8 +83,6 @@ void mousePressed()
   {
     streams[i].mouseIsPressed();
   }
-  
-  oSound.mouseIsPressed();
 }
 
 void mouseReleased()
@@ -97,8 +91,6 @@ void mouseReleased()
   {
     streams[i].mouseIsReleased();
   }
-  
-  oSound.mouseIsReleased();
 }
 
 void setBlurAmount(float amt)
@@ -114,7 +106,7 @@ void setBlurAmount(float amt)
 
 void setMouseDirection()
 {
-  float easing = 0.13;
+  float easing = 0.09;
   float dx = mouseX - lastMousePos.x;
   lastMousePos.x += dx * easing;
   
@@ -128,11 +120,22 @@ void setMouseDirection()
   
   
   mouseDirection = mousePressed ? new PVector(-mouse.x, mouse.y) : new PVector(0.0, 0.0);
-
+  
+  
+/*
+  float angle = atan(dx/dy);
+  mouseDirection = PVector.fromAngle(angle + PI * 0.5);
+  */
+  
   
 }
 
-
+float[] normalizeToUV(float[] vals)
+{
+  vals[0] = (vals[0] / float(width) - 0.5) + 1;
+  vals[1] = (vals[1] / float(height) - 0.5) + 1;
+  return vals;
+}
 
 void draw()
 {
@@ -150,7 +153,12 @@ void draw()
   }
   gfx.endDraw();
   
- 
+  /*
+  pre.beginDraw();
+  pre.image(gfx, 0,0);
+  pre.endDraw();
+  */
+  
   
   float dis = PVector.dist(new PVector(mouseX, mouseY), lastMousePos);
   float blurAmount = map(dis, 40, 160, 0, 1);
@@ -168,6 +176,9 @@ void draw()
   blurPass.image(gfx, 0,0);
   blurPass.shader(blur);
   blurPass.endDraw();
+  
+    float ar = width / height;
+  //orb.set("resolution", float(100), float(100));
 
   float mx = float(mouseX);// map(mouseX, 0, width, 0, 1);
   float my = float(mouseY);//map(mouseY, 0, height, 1, 0);
@@ -179,7 +190,7 @@ void draw()
   if (radiusEnvelope.currentState == adsrStates.env_attack ||
       radiusEnvelope.currentState == adsrStates.env_sustain)
   {
-    rad = map(radiusEnvelope.getOutput(), 0.0, 1.0, 0, 24) ;
+    rad = map(radiusEnvelope.getOutput(), 0.0, 1.0, 0, 0.01) ;
     
   }
   orb.set("radius", rad);
@@ -210,11 +221,7 @@ void draw()
   //image(pre, 0,0);
   //blend(pre, 0,0, width, height, 0,0, width,height, ADD ); 
   
-  fill(255);
-  text(frameRate, 20, 20);
   
-  oSound.setIntensity(dis);
-  oSound.render(timeElapsed);
   
   timeElapsed = 1 / frameRate;
   time += 0.2;

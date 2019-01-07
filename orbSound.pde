@@ -14,8 +14,8 @@ class OrbSound
   
   Noise noise;
   MoogFilter lpf;
-  
-  Delay delay;
+  MoogFilter hpf;
+ 
   
   float lpfFrequency, lpfMod, lfoFreq, lfoMod;
   
@@ -48,19 +48,19 @@ class OrbSound
     minim = new Minim(p);
     out = minim.getLineOut();
     
-    noise = new Noise(0.2, Noise.Tint.PINK);
+    noise = new Noise(0.5, Noise.Tint.PINK);
     
     lfoFreq = 9;
     
-    lfo = new Oscil(lfoFreq, 0.001, Waves.TRIANGLE);
+    lfo = new Oscil(lfoFreq, 0.001, Waves.SINE);
     lfo.patch(noise.amplitude);
   
     lpf = new MoogFilter(600, .5);
+    hpf = new MoogFilter(80, 0.7);
+    hpf.type = MoogFilter.Type.HP;
+        
     
-    delay = new Delay( 0.15, 0.3, true, true );
-    
-    
-    noise.patch(lpf).patch(out);
+    noise.patch(hpf).patch(lpf).patch(out);
     
     env = new Envelope(0.5, 0.7, 1.0, 0.5, 60);
     
@@ -71,17 +71,10 @@ class OrbSound
   void setIntensity(float amount)
   {
     
-    lfoMod = amount / 300;
-    
-    if(mousePressed)
-    {
-      lpfMod = amount * 3;
-    }
-    else
-    {
-      lpfMod = 0;
-    }
-    
+    lfoMod = amount/ (width * 0.5);
+   
+    lpfMod = mousePressed ? amount * 3 : 0;
+  
   }
   
   float lastFreq;
@@ -91,7 +84,7 @@ class OrbSound
   void render(float timeElapsed)
   {
     
-    float a = env.getGatedOutput() * 0.7;
+    float a = env.getGatedOutput() * 0.95;
     
     Line gainControl = new Line(timeElapsed, lastGain, a);
     
@@ -104,10 +97,16 @@ class OrbSound
     freqControl.patch(lpf.frequency);
     
     
+    
+    
     float lfoF = lfoFreq / (lfoMod + 1);
-    lfo.frequency.setLastValue(lfoF);
+    Line lfoFreqControl = new Line(timeElapsed, lastLfoFreq, lfoF);
+    lfoFreqControl.patch(lfo.frequency);
+   
+    //lfo.frequency.setLastValue(lfoF);
     
     lastFreq = lpfFrequency;
+    lastLfoFreq = lfoF;
     lastGain = a;
     
    

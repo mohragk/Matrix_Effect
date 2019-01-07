@@ -56,9 +56,9 @@ vec3 hsb2rgb( in vec3 c ){
     
     vec4 origColor = texture2D( texture, vertTexCoord.st);
 
-    vec3 colorA = origColor.rgb;
+    //vec3 colorA = origColor.rgb;
 
-    vec3 hsvColorA = rgb2hsb(colorA);
+    vec3 hsvColorA = rgb2hsb(origColor.rgb);
 
 
     hsvColorA.g = 1.0 - (amplitude * 1 * abs(cos(time * pi * 0.5)));

@@ -40,9 +40,12 @@ void main()
     //convert to ss
     dist = dist / resolution.x;
     
-    float sm = radius * 5;
+	float rad = radius / resolution.x;
+    float sm = rad * 5;
     
-    float vignette = smoothstep(radius, sm, dist);
+	
+	
+    float vignette = smoothstep(rad, sm, dist);
     
     green *= 1 - vignette;
     
