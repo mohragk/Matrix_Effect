@@ -7,23 +7,6 @@ public enum adsrStates{
 }
 
 class Envelope {
-  /*
-  float attackTime = 500;
-  float decayTime = 200;
-  float sustainLevel = 1.0;
-  float releaseTime = 700;
-  
-  float startTime = 0;
-  
-  float attackEnd = 0;
-  float releaseEnd = 0;
-  
-  float releaseStartVal = sustainLevel;
-  
-  boolean newTrigger = false;
-  boolean startRelease = false;
-  */
-  
   float fps;
   
   float attackRate;
