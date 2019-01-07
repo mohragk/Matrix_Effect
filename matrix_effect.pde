@@ -1,4 +1,6 @@
-float symbolSize = 18;
+
+
+float symbolSize = 16;
 float timeElapsed = 0;
 float time = 0;
 
@@ -20,6 +22,8 @@ PFont font;
 Stream[] streams;
 
 ADSR radiusEnvelope;
+
+orbSound oSound;
 
 
 int rows;
@@ -54,6 +58,8 @@ void setup()
    
   font = createFont("HiraginoSans-W3", symbolSize);
   
+  oSound = new orbSound(this);
+  
 }
 
 void setupGraphics()
@@ -83,6 +89,8 @@ void mousePressed()
   {
     streams[i].mouseIsPressed();
   }
+  
+  oSound.mouseIsPressed();
 }
 
 void mouseReleased()
@@ -91,6 +99,8 @@ void mouseReleased()
   {
     streams[i].mouseIsReleased();
   }
+  
+  oSound.mouseIsReleased();
 }
 
 void setBlurAmount(float amt)
@@ -221,7 +231,11 @@ void draw()
   //image(pre, 0,0);
   //blend(pre, 0,0, width, height, 0,0, width,height, ADD ); 
   
+  fill(255);
+  text(frameRate, 20, 20);
   
+  oSound.setIntensity(dis);
+  oSound.render();
   
   timeElapsed = 1 / frameRate;
   time += 0.2;

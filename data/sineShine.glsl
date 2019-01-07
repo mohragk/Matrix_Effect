@@ -1,6 +1,6 @@
 #ifdef GL_ES
-precision highp float;
-precision highp int;
+precision mediump float;
+precision mediump int;
 #endif
  
 #define PROCESSING_TEXTURE_SHADER
