@@ -1,13 +1,12 @@
 
 
-float symbolSize = 16;
+float symbolSize = 18;
 float timeElapsed = 0;
 float time = 0;
 
 PVector lastMousePos;
 PVector mouseDirection;
 
-PGraphics pre;
 PGraphics gfx;
 PGraphics blurPass;
 PGraphics shinePass;
@@ -21,17 +20,17 @@ PFont font;
 
 Stream[] streams;
 
-ADSR radiusEnvelope;
+Envelope radiusEnvelope;
 
-orbSound oSound;
+OrbSound oSound;
 
 
 int rows;
 
 void setup()
 {
-  //size(1024, 720, P2D);
-  fullScreen(P2D);
+  size(1024, 720, P2D);
+  //fullScreen(P2D);
   
   setupGraphics();
   
@@ -40,7 +39,7 @@ void setup()
   
   rows = (int)width / (int)symbolSize;
   streams = new Stream[rows];
-  radiusEnvelope = new ADSR(
+  radiusEnvelope = new Envelope(
     60, // attackTime 
     0, // decayTime (unused) 
     1, // sustainLevel [0.0 - 1.0]
@@ -58,13 +57,12 @@ void setup()
    
   font = createFont("HiraginoSans-W3", symbolSize);
   
-  oSound = new orbSound(this);
+  oSound = new OrbSound(this);
   
 }
 
 void setupGraphics()
 {
-  pre = createGraphics(width, height, P2D);
   gfx = createGraphics(width, height, P2D);
   
   blur = loadShader("blur.glsl");
@@ -163,12 +161,7 @@ void draw()
   }
   gfx.endDraw();
   
-  /*
-  pre.beginDraw();
-  pre.image(gfx, 0,0);
-  pre.endDraw();
-  */
-  
+ 
   
   float dis = PVector.dist(new PVector(mouseX, mouseY), lastMousePos);
   float blurAmount = map(dis, 40, 160, 0, 1);
@@ -235,7 +228,7 @@ void draw()
   text(frameRate, 20, 20);
   
   oSound.setIntensity(dis);
-  oSound.render();
+  oSound.render(timeElapsed);
   
   timeElapsed = 1 / frameRate;
   time += 0.2;

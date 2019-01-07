@@ -6,7 +6,7 @@ public enum adsrStates{
   env_idle
 }
 
-class ADSR {
+class Envelope {
   /*
   float attackTime = 500;
   float decayTime = 200;
@@ -49,7 +49,7 @@ class ADSR {
   adsrStates currentState;
  
   
-  ADSR(float aTime, float dTime, float sLevel, float rTime, float newFps)
+  Envelope(float aTime, float dTime, float sLevel, float rTime, float newFps)
   {
     fps =  newFps;
     
@@ -76,7 +76,6 @@ class ADSR {
     attackCoef = calcCoef(attackRate, targetRatioA);
     attackBase = (1.0 + targetRatioA) * (1.0 - attackCoef);
     
-    println(attackCoef);
   }
   
   void setDecayRate(float rate)
