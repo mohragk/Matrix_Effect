@@ -89,6 +89,7 @@ void mousePressed()
   }
   
   oSound.mouseIsPressed();
+  noCursor();
 }
 
 void mouseReleased()
@@ -99,6 +100,8 @@ void mouseReleased()
   }
   
   oSound.mouseIsReleased();
+  
+  cursor(HAND);
 }
 
 void setBlurAmount(float amt)
@@ -183,6 +186,7 @@ void draw()
     
   }
   orb.set("radius", rad);
+  orb.set("time", time);
   
   
   orbPass.beginDraw();
@@ -217,6 +221,6 @@ void draw()
   oSound.render(timeElapsed);
   
   timeElapsed = 1 / frameRate;
-  time += 0.2;
+  time += 0.4;
   
 }
