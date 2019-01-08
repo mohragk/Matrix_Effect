@@ -34,7 +34,7 @@ void setup()
   
   setupGraphics();
   
-  lastMousePos = new PVector(0,0, 0);
+  lastMousePos = new PVector(mouseX, mouseY, 0);
   mouseDirection = new PVector (1.0, 1.0);
   
   rows = (int)width / (int)symbolSize;
