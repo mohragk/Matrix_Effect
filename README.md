@@ -1,7 +1,7 @@
 # Matrix_Effect
 
 ### A remake of a classic effect
-[![Matrix Effect Demo](https://imgur.com/a/57bXyN8)](https://www.youtube.com/watch?v=CxxsnXCyKQQ)
+[![Matrix Effect Demo](https://pasteboard.co/HVtJxni.png)](https://www.youtube.com/watch?v=CxxsnXCyKQQ)
 
 #### Info
 A simple symbol scrolling effect, inspired by the movie The Matrix. When clicking the mouse, a force field is generated. It can be manipulated by dragging the mouse around.
