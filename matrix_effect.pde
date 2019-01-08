@@ -211,11 +211,9 @@ void draw()
 
   
   image(shinePass,0,0);
-  //image(pre, 0,0);
-  //blend(pre, 0,0, width, height, 0,0, width,height, ADD ); 
+
   
-  fill(255);
-  text(frameRate, 20, 20);
+ 
   
   oSound.setIntensity(dis);
   oSound.render(timeElapsed);
