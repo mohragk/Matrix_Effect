@@ -20,11 +20,12 @@ uniform float time;
 
 #define TWO_PI 6.28318530718
 
-float map(float value, float min1, float max1, float min2, float max2) 
-{
-  return min2 + (value - min1) * (max2 - min2) / (max1 - min1);
+float smoothCircle(in vec2 _st, in float _radius, in float smoothness){
+    vec2 dist = _st-vec2(0.5,0.5);
+	return 1.-smoothstep(_radius-(_radius*0.01),
+                         _radius+(_radius*smoothness),
+                         dot(dist,dist)*4.0);
 }
-
 
 vec2 random2(vec2 st){
     st = vec2( dot(st,vec2(127.1,311.7)),
