@@ -4,6 +4,8 @@ float symbolSize = 18;
 float timeElapsed = 0;
 float time = 0;
 
+float frequency = 12;
+
 PVector lastMousePos;
 PVector mouseDirection;
 
@@ -25,12 +27,16 @@ Envelope radiusEnvelope;
 OrbSound oSound;
 
 
+
+
 int rows;
 
 void setup()
 {
   //size(1024, 720, P2D);
   fullScreen(P2D);
+  
+  frameRate(60);
   
   setupGraphics();
   
@@ -104,11 +110,16 @@ void mouseReleased()
   cursor(HAND);
 }
 
+float getPhaseIncrement(float hz)
+{
+  return hz / 60; 
+}
+
 void setBlurAmount(float amt)
 {
   int size = floor(amt * 20) + 1;
   float sigma = (amt * 8.0) + 1.0 ;
-  
+    
   blur.set("blurSize", size);
   blur.set("sigma", sigma); 
 }
@@ -126,13 +137,9 @@ void setMouseDirection()
   
   PVector mouse = new PVector(mouseX, mouseY);
   mouse.sub(lastMousePos);
-  
   mouse.normalize();
   
-  
   mouseDirection = mousePressed ? new PVector(-mouse.x, mouse.y) : new PVector(0.0, 0.0);
-
-  
 }
 
 
@@ -142,17 +149,18 @@ void draw()
   background(0);
   
   // Main Matrix Symbol rendering
-  if (gfx != null) {gfx.textFont(font);}
-  
   gfx.beginDraw();
+  gfx.textFont(font);
   gfx.background(0);
+  
   for (int i =0 ; i < streams.length; i++)
   {
     streams[i].update(timeElapsed);
     streams[i].render(timeElapsed);
   }
-  gfx.endDraw();
   
+  gfx.endDraw();
+ 
  
   
   float dis = PVector.dist(new PVector(mouseX, mouseY), lastMousePos);
@@ -160,16 +168,14 @@ void draw()
   setBlurAmount(blurAmount);
   
   setMouseDirection();
-  
-  //if (mousePressed)
-  {
-    blur.set("mouseDir_x", mouseDirection.x);
-    blur.set("mouseDir_y", mouseDirection.y);
-  }
-  
+   
+  blur.set("mouseDir_x", mouseDirection.x);
+  blur.set("mouseDir_y", mouseDirection.y);
+
+
   blurPass.beginDraw();
-  blurPass.image(gfx, 0,0);
   blurPass.shader(blur);
+  blurPass.image(gfx, 0,0);
   blurPass.endDraw();
 
   float mx = float(mouseX);// map(mouseX, 0, width, 0, 1);
@@ -182,7 +188,7 @@ void draw()
   if (radiusEnvelope.currentState == adsrStates.env_attack ||
       radiusEnvelope.currentState == adsrStates.env_sustain)
   {
-    rad = map(radiusEnvelope.getOutput(), 0.0, 1.0, 0, 24) ;
+    rad = map(radiusEnvelope.getOutput(), 0.0, 1.0, 0, width/100) ;
     
   }
   orb.set("radius", rad);
@@ -212,13 +218,14 @@ void draw()
   
   image(shinePass,0,0);
 
-  
- 
+
   
   oSound.setIntensity(dis);
   oSound.render(timeElapsed);
   
   timeElapsed = 1 / frameRate;
-  time += 0.4;
+  frequency = oSound.currentFreq;
+  time += getPhaseIncrement(frequency);
+  
   
 }

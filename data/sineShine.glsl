@@ -19,6 +19,7 @@ uniform float time;
 uniform float brightness;
 
 float pi = 3.141592;
+#define TWO_PI 6.28318530718
 
 vec3 rgb2hsb( in vec3 c ){
     vec4 K = vec4(0.0, -1.0 / 3.0, 2.0 / 3.0, -1.0);
@@ -61,7 +62,7 @@ vec3 hsb2rgb( in vec3 c ){
     vec3 hsvColorA = rgb2hsb(origColor.rgb);
 
 
-    hsvColorA.g = 1.0 - (amplitude * 1 * abs(cos(time * pi * 0.5)));
+    hsvColorA.g = 1.0 - (amplitude * 1 * abs(cos(time * TWO_PI)));
     
    
 

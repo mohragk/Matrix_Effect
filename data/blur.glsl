@@ -28,6 +28,7 @@ uniform float sigma;        // The sigma value for the gaussian function: higher
                             // ... play around with this based on what you need <span class="Emoticon Emoticon1"><span>:)</span></span>
  
 const float pi = 3.14159265;
+#define TWO_PI 6.28318530718
  
 void main() {  
   float numBlurPixelsPerSide = float(blurSize / 2); 
@@ -36,7 +37,7 @@ void main() {
  
   // Incremental Gaussian Coefficent Calculation (See GPU Gems 3 pp. 877 - 889)
   vec3 incrementalGaussian;
-  incrementalGaussian.x = 1.0 / (sqrt(2.0 * pi) * sigma);
+  incrementalGaussian.x = 1.0 / (sqrt(TWO_PI) * sigma);
   incrementalGaussian.y = exp(-0.5 / (sigma * sigma));
   incrementalGaussian.z = incrementalGaussian.y * incrementalGaussian.y;
  

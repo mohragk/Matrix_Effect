@@ -18,10 +18,13 @@ uniform vec2 mousePos;
 uniform float radius;
 uniform float time;
 
+#define TWO_PI 6.28318530718
+
 float map(float value, float min1, float max1, float min2, float max2) 
 {
   return min2 + (value - min1) * (max2 - min2) / (max1 - min1);
 }
+
 
 vec2 random2(vec2 st){
     st = vec2( dot(st,vec2(127.1,311.7)),
@@ -58,17 +61,13 @@ void main()
     
 	float rad = radius / resolution.x;
     float sm = rad * 5;
-    
-    
-    
-    
-	
+
     float vignette = smoothstep(rad, sm, dist);
     
     vec2 st = gl_FragCoord.xy / resolution.xy;
     vec2 pos = vec2(
-        st.x * 145 * abs(sin(time)), 
-        st.y * 145 * abs(sin(time)) * (vignette / 10)
+        st.x * 145 * abs(sin(TWO_PI * time)), 
+        st.y * 145 * abs(sin(TWO_PI * time)) * (vignette / 10)
         );
 	float n = noise( pos );
     

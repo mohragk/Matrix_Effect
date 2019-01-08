@@ -17,7 +17,7 @@ class OrbSound
   MoogFilter hpf;
  
   
-  float lpfFrequency, lpfMod, lfoFreq, lfoMod;
+  float lpfFrequency, lpfMod, lfoFreq, lfoMod, currentFreq;
   
   PApplet p;
   
@@ -109,6 +109,7 @@ class OrbSound
     lastLfoFreq = lfoF;
     lastGain = a;
     
+    currentFreq = lfoF;
    
   }
 }
