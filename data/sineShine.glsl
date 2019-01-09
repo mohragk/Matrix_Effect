@@ -13,15 +13,16 @@ uniform vec2 texOffset;
 varying vec4 vertColor;
 varying vec4 vertTexCoord;
 
-
+uniform vec2 resolution;
 uniform float amplitude;
 uniform float time; 
 uniform float brightness;
 
-float pi = 3.141592;
+#define PI = 3.141592;
 #define TWO_PI 6.28318530718
 
-vec3 rgb2hsb( in vec3 c ){
+vec3 rgb2hsb( in vec3 c )
+{
     vec4 K = vec4(0.0, -1.0 / 3.0, 2.0 / 3.0, -1.0);
     vec4 p = mix(vec4(c.bg, K.wz),
                  vec4(c.gb, K.xy),
@@ -37,7 +38,8 @@ vec3 rgb2hsb( in vec3 c ){
 }
 
 
-vec3 hsb2rgb( in vec3 c ){
+vec3 hsb2rgb( in vec3 c )
+{
     vec3 rgb = clamp(abs(mod(c.x*6.0+vec3(0.0,4.0,2.0),
                              6.0)-3.0)-1.0,
                      0.0,
@@ -51,13 +53,22 @@ vec3 hsb2rgb( in vec3 c ){
  
  void main()
  {
-     vec3 color = vec3( 0.0, 0.0, 0.0);
-     float alpha = 1.0;
-     
-    
-    vec4 origColor = texture2D( texture, vertTexCoord.st);
+    vec3 color = vec3( 0.0, 0.0, 0.0);
+    float alpha = 1.;
 
-    //vec3 colorA = origColor.rgb;
+    float fact = 0.1;
+   
+
+    vec2 uv = gl_FragCoord.xy / resolution.xy; 
+    //uv.x *= resolution.x / resolution.y;
+    float X = uv.x * 10. + time;
+    float Y = uv.y * 10. + time;
+    uv.y += cos(X+Y) * 0.03 * cos(Y) * fact;
+    uv.x += sin(X-Y) * 0.03 * sin(Y) * fact;
+
+    uv.st = vertTexCoord.st;   
+
+    vec4 origColor = texture2D( texture, uv.st);
 
     vec3 hsvColorA = rgb2hsb(origColor.rgb);
 

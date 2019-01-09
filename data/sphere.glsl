@@ -58,7 +58,8 @@ void main()
     vec4 origColor = texture2D( texture, vertTexCoord.st);
         
     
-    vec2 currentPos = gl_FragCoord.xy/resolution.xy;
+
+    vec2 currentPos = gl_FragCoord.xy / resolution.xy; 
     currentPos.x *= resolution.x/resolution.y;
     
     vec2 mouse = mousePos.xy / resolution.xy;
@@ -71,15 +72,31 @@ void main()
     float dist = distance(mouse, currentPos);
 
     float rad = radius / resolution.x;
-    float smo = rad * 5;
+    float smo = rad * 5.0;
 
-    float renderRadius = rad + smo + 0.01;
+    float maskRadius = rad * 8.0;
+    float maskSmooth = maskRadius * 3.0;
 
-    if (dist < renderRadius)
+    float renderRadius = maskRadius + maskSmooth + 0.01;
+
+    if ( dist < renderRadius)
     {
-       
 
+       // VIGNETTE 
         float vignette = smoothstep(rad, smo, dist);
+
+        // WATER MASK
+        float mask = 1.0 - smoothstep(maskRadius, maskSmooth, dist);
+
+
+        // DISPLACEMENT
+        vec2 uv = gl_FragCoord.xy / resolution.xy; 
+        float X = uv.x * 10. + time;
+        float Y = uv.y * 10. + time;
+        uv.y += cos(X+Y) * 0.01 * cos(Y) * mask;
+        uv.x += sin(X-Y) * 0.01 * sin(Y) * mask;
+
+        origColor = texture2D( texture, uv.st);
         
         vec2 st = currentPos;
         vec2 pos = vec2(
@@ -92,14 +109,10 @@ void main()
         
         green *= 1. - vignette;
         
-        origColor.rgb += mix(origColor.rgb, green, 0.8);
+        origColor.rgb += mix(origColor.rgb, green, 0.8);       
     }
-
-
-    //convert to ss
-    
-    
 	
+    origColor = clamp(origColor, 0.0, 1.0);
 
     gl_FragColor = origColor;
  

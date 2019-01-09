@@ -14,6 +14,8 @@ PGraphics blurPass;
 PGraphics shinePass;
 PGraphics orbPass;
 
+PGraphics orbMask;
+
 PShader blur;
 PShader shine;
 PShader orb;
@@ -84,6 +86,7 @@ void setupGraphics()
   orbPass = createGraphics(width, height, P2D);
   orbPass.noSmooth();
   
+  orbMask = createGraphics(width, height, P2D);
   
 }
 
@@ -188,13 +191,13 @@ void draw()
   if (radiusEnvelope.currentState == adsrStates.env_attack ||
       radiusEnvelope.currentState == adsrStates.env_sustain)
   {
-    rad = map(radiusEnvelope.getOutput(), 0.0, 1.0, 0, width/100) ;
-    
+    rad = map(radiusEnvelope.getOutput(), 0.0, 1.0, 0, width/100.) ;
   }
+  
+  
   orb.set("radius", rad);
   orb.set("time", time);
-  
-  
+   
   orbPass.beginDraw();
   orbPass.shader(orb);
   orbPass.image(blurPass, 0,0);
@@ -208,6 +211,8 @@ void draw()
   
   float br = mousePressed? map(dis, 0.0, 200.0, 1, 3) : 1.0;
   shine.set("brightness", br);
+  
+  shine.set("u_resolution", float(width), float(height));
   
   shinePass.beginDraw();
   shinePass.image(orbPass, 0,0);
