@@ -177,7 +177,7 @@ void draw()
 
 
   blurPass.beginDraw();
-  //blurPass.shader(blur);
+  blurPass.shader(blur);
   blurPass.image(gfx, 0,0);
   blurPass.endDraw();
 
@@ -212,7 +212,7 @@ void draw()
   float br = mousePressed? map(dis, 0.0, 200.0, 1, 3) : 1.0;
   shine.set("brightness", br);
   
-  shine.set("u_resolution", float(width), float(height));
+  shine.set("resolution", float(width), float(height));
   
   shinePass.beginDraw();
   shinePass.image(orbPass, 0,0);
