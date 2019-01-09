@@ -18,7 +18,9 @@ uniform vec2 mousePos;
 uniform float radius;
 uniform float time;
 
+
 #define TWO_PI 6.28318530718
+#define PI 3.1416
 
 float smoothCircle(in vec2 _st, in float _radius, in float smoothness){
     vec2 dist = _st-vec2(0.5,0.5);
@@ -46,41 +48,58 @@ float noise(vec2 st) {
 }
 
 
+
+
+
 void main()
  {
      
     vec3 green = vec3(0.0, 1.0, 0.4);
     vec4 origColor = texture2D( texture, vertTexCoord.st);
         
-    vec2 currentPos =  vec2(gl_FragCoord.x, resolution.y - gl_FragCoord.y);
+    
+    vec2 currentPos = gl_FragCoord.xy/resolution.xy;
+    currentPos.x *= resolution.x/resolution.y;
+    
+    vec2 mouse = mousePos.xy / resolution.xy;
+    mouse = vec2(mouse.x, 1.0 - mouse.y);
+    mouse.x *= resolution.x / resolution.y;
+
     
    
-    float dist = distance(mousePos, currentPos);
-    
-    //convert to ss
-    dist = dist / resolution.x;
-    
-	float rad = radius / resolution.x;
-    float sm = rad * 5;
 
-    float vignette = smoothstep(rad, sm, dist);
+    float dist = distance(mouse, currentPos);
+
+    float rad = radius / resolution.x;
+    float smo = rad * 5;
+
+    float renderRadius = rad + smo + 0.01;
+
+    if (dist < renderRadius)
+    {
+       
+
+        float vignette = smoothstep(rad, smo, dist);
+        
+        vec2 st = currentPos;
+        vec2 pos = vec2(
+            st.x * 145. * abs(sin(TWO_PI * time)), 
+            st.y * 145. * abs(sin(TWO_PI * time))  * 10
+            );
+        float n = noise( pos );
+        
+        green.rgb += vec3(n); 
+        
+        green *= 1. - vignette;
+        
+        origColor.rgb += mix(origColor.rgb, green, 0.8);
+    }
+
+
+    //convert to ss
     
-    vec2 st = gl_FragCoord.xy / resolution.xy;
-    vec2 pos = vec2(
-        st.x * 145 * abs(sin(TWO_PI * time)), 
-        st.y * 145 * abs(sin(TWO_PI * time)) * (vignette / 10)
-        );
-	float n = noise( pos );
     
-    green.rgb += vec3(n);
-    clamp(green, 0, 1);
-    
-    
-    
-    green *= 1 - vignette;
-    
-    origColor.rgb += mix(origColor.rgb, green, 0.8);
-    
+	
 
     gl_FragColor = origColor;
  

@@ -14,6 +14,7 @@ varying vec4 vertColor;
 varying vec4 vertTexCoord;
 
 uniform vec2 resolution;
+uniform vec2 mousePos;
 uniform float time;
 
 
@@ -24,52 +25,61 @@ vec2 random2( vec2 p ) {
 
 void main()
 {
-     vec2 st = gl_FragCoord.xy/resolution.xy;
+    vec2 st = gl_FragCoord.xy/resolution.xy;
     st.x *= resolution.x/resolution.y;
     vec3 color = vec3(0.0);
 
-    // Scale
-    st *= 4.;
+    vec2 mouse = mousePos.xy / resolution.xy;
+    mouse = vec2(mouse.x, 1.0 - mouse.y);
+    mouse.x *= resolution.x / resolution.y;
+    float size = 0.05;
 
-    // Tile the space
-    vec2 i_st = floor(st);
-    vec2 f_st = fract(st);
+    float margin_left = mouse.x - size ;
+    float margin_right = 1.0 - (mouse.x - size);
+    float margin_top = 0.01;
+    float margin_bottom = 0.01;
 
-    float m_dist = 1;  // minimun distance
+    if(st.x >= margin_left && st.x <= 1.0 - margin_right)
+    {
+        if (st.y <= margin_top && st.y >= 1.0 - margin_bottom)
+        {
+            // Scale
+            st *= 40.;
 
-    for (int y= -1; y <= 1; y++) {
-        for (int x= -1; x <= 1; x++) {
-            // Neighbor place in the grid
-            vec2 neighbor = vec2(float(x),float(y));
+            // Tile the space
+            vec2 i_st = floor(st);
+            vec2 f_st = fract(st);
 
-            // Random position from current + neighbor place in the grid
-            vec2 point = random2(i_st + neighbor);
+            float m_dist = 1.0;  // minimun distance
 
-            // Animate the point
-            point = 0.5 + 0.5*sin((time *0.1) + 6.2831*point);
+            for (int y= -1; y <= 1; y++) {
+                for (int x= -1; x <= 1; x++) {
+                    // Neighbor place in the grid
+                    vec2 neighbor = vec2(float(x),float(y));
 
-            // Vector between the pixel and the point
-            vec2 diff = neighbor + point - f_st;
+                    // Random position from current + neighbor place in the grid
+                    vec2 point = random2(i_st + neighbor);
 
-            // Distance to the point
-            float dist = length(diff);
+                    // Animate the point
+                    point = 0.5 + 0.5*sin((time * 2.) + 6.2831*point);
 
-            // Keep the closer distance
-            m_dist = min(m_dist, dist);
-        }
+                    // Vector between the pixel and the point
+                    vec2 diff = neighbor + point - f_st;
+
+                    // Distance to the point
+                    float dist = length(diff);
+
+                    // Keep the closer distance
+                    m_dist = min(m_dist, dist);
+                }
+            }
+
+            // Draw the min distance (distance field)
+            color += m_dist;
+        }   
     }
 
-    // Draw the min distance (distance field)
-    color += m_dist;
-
-    // Draw cell center
-    color += 1.-step(0.02, m_dist);
-
-    // Draw grid
-   // color.r += step(0.98, f_st.x) + step(0.98, f_st.y);
-
-    // Show isolines
-    //color -= step(.7,abs(sin(27.0*m_dist)))*.5;
+    
 
     gl_FragColor = vec4(color,1.0);
 }

@@ -174,7 +174,7 @@ void draw()
 
 
   blurPass.beginDraw();
-  blurPass.shader(blur);
+  //blurPass.shader(blur);
   blurPass.image(gfx, 0,0);
   blurPass.endDraw();
 
@@ -226,6 +226,9 @@ void draw()
   timeElapsed = 1 / frameRate;
   frequency = oSound.currentFreq;
   time += getPhaseIncrement(frequency);
+  
+  fill(255, 12, 12);
+  text(frameRate, 40, 40);
   
   
 }
