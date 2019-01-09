@@ -71,6 +71,7 @@ void main()
 
     float dist = distance(mouse, currentPos);
 
+
     float rad = radius / resolution.x;
     float smo = rad * 5.0;
 
@@ -79,7 +80,7 @@ void main()
 
     float renderRadius = maskRadius + maskSmooth + 0.01;
 
-    if ( dist < renderRadius)
+    //if ( dist < renderRadius)
     {
 
        // VIGNETTE 
