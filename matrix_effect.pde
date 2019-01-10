@@ -115,13 +115,13 @@ void mouseReleased()
 
 float getPhaseIncrement(float hz)
 {
-  return hz / 60; 
+  return hz / frameRate; 
 }
 
 void setBlurAmount(float amt)
 {
-  int size = floor(amt * 20) + 1;
-  float sigma = (amt * 8.0) + 1.0 ;
+  int size = floor(amt * 8) + 1;
+  float sigma = (amt * 3.0) + 1.0 ;
     
   blur.set("blurSize", size);
   blur.set("sigma", sigma); 
@@ -229,6 +229,7 @@ void draw()
   oSound.render(timeElapsed);
   
   timeElapsed = 1 / frameRate;
+  
   frequency = oSound.currentFreq;
   time += getPhaseIncrement(frequency);
   
