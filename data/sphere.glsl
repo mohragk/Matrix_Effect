@@ -1,6 +1,6 @@
 #ifdef GL_ES
-precision mediump float;
-precision mediump int;
+precision highp float;
+precision highp int;
 #endif
  
 #define PROCESSING_TEXTURE_SHADER
@@ -22,12 +22,6 @@ uniform float time;
 #define TWO_PI 6.28318530718
 #define PI 3.1416
 
-float smoothCircle(in vec2 _st, in float _radius, in float smoothness){
-    vec2 dist = _st-vec2(0.5,0.5);
-	return 1.-smoothstep(_radius-(_radius*0.01),
-                         _radius+(_radius*smoothness),
-                         dot(dist,dist)*4.0);
-}
 
 vec2 random2(vec2 st){
     st = vec2( dot(st,vec2(127.1,311.7)),
@@ -80,7 +74,7 @@ void main()
 
     float renderRadius = maskRadius + maskSmooth + 0.01;
 
-    //if ( dist < renderRadius)
+    if ( dist < renderRadius)
     {
 
        // VIGNETTE 

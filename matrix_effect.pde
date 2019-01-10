@@ -75,7 +75,7 @@ void setupGraphics()
   
   blur = loadShader("blur.glsl");
   shine = loadShader("sineShine.glsl");
-  orb = loadShader("sphere.glsl");
+  orb = loadShader("orb.glsl");
   
   blurPass = createGraphics(width, height, P2D);
   blurPass.noSmooth();  
